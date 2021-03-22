@@ -1,18 +1,57 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BuildingManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    //[SerializeField] private Transform mouseVisualTransform;
+    public static BuildingManager Instance { get; private set; }
+
+    private Camera mainCamera;
+
+    private BuildingTypeListSO buildingTypeList;
+    private BuildingTypeSO activeBuildingType;
+
+    private void Awake()
     {
-        Debug.Log("Start!");
+        Instance = this;
+        buildingTypeList = Resources.Load<BuildingTypeListSO>(typeof(BuildingTypeListSO).Name);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        mainCamera = Camera.main;
+    }
+
+    private void Update()
+    {
+        //mouseVisualTransform.position = GetMouseWorldPosition();
+
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        {
+            if (activeBuildingType != null)
+            {
+                Instantiate(activeBuildingType.prefab, GetMouseWorldPosition(), Quaternion.identity);
+            }
+        }
+
+    }
+
+    private Vector3 GetMouseWorldPosition()
+    {
+        Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPosition.z = 0f;
+        return mouseWorldPosition;
+    }
+
+    public void SetActiveBuildingType(BuildingTypeSO buildingType)
+    {
+        activeBuildingType = buildingType;
+    }
+
+    public BuildingTypeSO GetActiveBuildingType()
+    {
+        return activeBuildingType;
     }
 }
