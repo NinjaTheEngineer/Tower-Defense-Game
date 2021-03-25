@@ -47,7 +47,11 @@ public class BuildingManager : MonoBehaviour
         {
             if (activeBuildingType != null && canBuild)
             {
-                Instantiate(activeBuildingType.prefab, UtilsClass.GetMouseWorldPosition(), Quaternion.identity);
+                if (ResourceManager.Instance.CanAfford(activeBuildingType.constructionResourceCostArray))
+                {
+                    ResourceManager.Instance.SpendResources(activeBuildingType.constructionResourceCostArray);
+                    Instantiate(activeBuildingType.prefab, UtilsClass.GetMouseWorldPosition(), Quaternion.identity);
+                }
             }
         }
 

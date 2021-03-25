@@ -247,6 +247,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6663680498488121153}
     m_Modifications:
+    - target: {fileID: 733320222782974804, guid: 968a94d8caf96d049ad0d69e78ac3dd4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168900079229515493, guid: 968a94d8caf96d049ad0d69e78ac3dd4, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3565715747615973154, guid: 968a94d8caf96d049ad0d69e78ac3dd4, type: 3}
       propertyPath: m_Name
       value: pfWoodHarvesterVisual 1
