@@ -28,6 +28,8 @@ public class BuildingManager : MonoBehaviour
     private BuildingTypeListSO buildingTypeList;
     private BuildingTypeSO activeBuildingType;
 
+    [SerializeField] private Building hqBuilding;
+
     private void Awake()
     {
         Instance = this;
@@ -42,16 +44,31 @@ public class BuildingManager : MonoBehaviour
     private void Update()
     {
         //mouseVisualTransform.position = GetMouseWorldPosition();
-        canBuild = CanSpawnBuilding(activeBuildingType, UtilsClass.GetMouseWorldPosition());
+        canBuild = CanSpawnBuilding(activeBuildingType, UtilsClass.GetMouseWorldPosition(), out string errorMessage);
+
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            if (activeBuildingType != null && canBuild)
+            if (activeBuildingType != null )
             {
-                if (ResourceManager.Instance.CanAfford(activeBuildingType.constructionResourceCostArray))
+                if (canBuild)
                 {
-                    ResourceManager.Instance.SpendResources(activeBuildingType.constructionResourceCostArray);
-                    Instantiate(activeBuildingType.prefab, UtilsClass.GetMouseWorldPosition(), Quaternion.identity);
+                    if (ResourceManager.Instance.CanAfford(activeBuildingType.constructionResourceCostArray))
+                    {
+                        ResourceManager.Instance.SpendResources(activeBuildingType.constructionResourceCostArray);
+                        //Instantiate(activeBuildingType.prefab, UtilsClass.GetMouseWorldPosition(), Quaternion.identity);
+                        BuildingConstruction.Create(UtilsClass.GetMouseWorldPosition(), activeBuildingType);
+                    }
+                    else
+                    {
+                        TooltipUI.Instance.Show("Cannot afford " + activeBuildingType.GetConstructionResourceCostString(),
+                            new TooltipUI.TooltipTimer { timer = 2f });
+                    }
                 }
+                else
+                {
+                    TooltipUI.Instance.Show(errorMessage, new TooltipUI.TooltipTimer { timer = 2f });
+                }
+
             }
         }
 
@@ -70,10 +87,11 @@ public class BuildingManager : MonoBehaviour
         return activeBuildingType;
     }
 
-    private bool CanSpawnBuilding(BuildingTypeSO buildingType, Vector3 position)
+    private bool CanSpawnBuilding(BuildingTypeSO buildingType, Vector3 position, out string errorMessage)
     {
         if(buildingType == null)
         {
+            errorMessage = "BuildingType = null";
             return false;
         }
         BoxCollider2D boxCollider2D = buildingType.prefab.GetComponent<BoxCollider2D>();
@@ -85,6 +103,7 @@ public class BuildingManager : MonoBehaviour
         {
             OnBuildingPlacementTrial?.Invoke(this,
                 new OnBuildingPlacementTrialEventArgs { canBePlaced = false });
+            errorMessage = "Area is not clear!";
             return false;
         }
 
@@ -102,6 +121,7 @@ public class BuildingManager : MonoBehaviour
                 {
                     OnBuildingPlacementTrial?.Invoke(this,
                         new OnBuildingPlacementTrialEventArgs { canBePlaced = false });
+                    errorMessage = "Too close to another building of the same type";
                     return false;
                 }
             }
@@ -119,12 +139,19 @@ public class BuildingManager : MonoBehaviour
             {
                 OnBuildingPlacementTrial?.Invoke(this,
                     new OnBuildingPlacementTrialEventArgs { canBePlaced = true });
+                errorMessage = "";
                 return true;
             }
         }
 
         OnBuildingPlacementTrial?.Invoke(this,
             new OnBuildingPlacementTrialEventArgs { canBePlaced = false });
+        errorMessage = "Too far from any other building!";
         return false;
+    }
+
+    public Building GetHQBuilding()
+    {
+        return hqBuilding;
     }
 }
