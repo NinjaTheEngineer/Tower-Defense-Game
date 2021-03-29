@@ -28,7 +28,7 @@ public class BuildingGhost : MonoBehaviour
 
     private void BuildingManager_OnActiveBuildingTypeChanged(object sender, BuildingManager.OnActiveBuildingTypeChangedEventArgs e)
     {
-        if(e.activeBuildingType == null)
+        if (e.activeBuildingType == null)
         {
             Hide();
             resourceNearbyOverlay.Hide();
@@ -36,7 +36,14 @@ public class BuildingGhost : MonoBehaviour
         else
         {
             Show(e.activeBuildingType.sprite);
-            resourceNearbyOverlay.Show(e.activeBuildingType.resourceGeneratorData);
+
+            if (e.activeBuildingType.hasResourceGeneratorData){
+                resourceNearbyOverlay.Show(e.activeBuildingType.resourceGeneratorData);
+            }
+            else
+            {
+                resourceNearbyOverlay.Hide();
+            }
         }
     }
 

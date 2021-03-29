@@ -9,12 +9,13 @@ public class ResourceManager : MonoBehaviour
 
     public event EventHandler OnResourceAmountChanged;
 
-
+    [SerializeField] private List<ResourceAmount> startingResourceAmountList;
     private Dictionary<ResourceTypeSO, int> resourceAmountDictionary;
 
     private void Awake()
     {
         Instance = this;
+        
         resourceAmountDictionary = new Dictionary<ResourceTypeSO, int>();
 
         ResourceTypeListSO resourceTypeList = Resources.Load<ResourceTypeListSO>(typeof(ResourceTypeListSO).Name);
@@ -22,6 +23,11 @@ public class ResourceManager : MonoBehaviour
         foreach(ResourceTypeSO resourceType in resourceTypeList.list)
         {
             resourceAmountDictionary[resourceType] = 0;
+        }
+
+        foreach(ResourceAmount resourceAmount in startingResourceAmountList)
+        {
+            AddResource(resourceAmount.resourceType, resourceAmount.amount);
         }
 
         //TestLogResourceAmountDictionary();
@@ -56,5 +62,31 @@ public class ResourceManager : MonoBehaviour
         OnResourceAmountChanged?.Invoke(this, EventArgs.Empty);
 
         //TestLogResourceAmountDictionary();
+    }
+
+    public bool CanAfford(ResourceAmount[] resourceAmountArray)
+    {
+        foreach (ResourceAmount resource in resourceAmountArray)
+        {
+            if (GetResourceAmount(resource.resourceType) >= resource.amount)
+            {
+                //Can afford
+            }
+            else
+            {
+                //Can't afford
+                return false;
+            }
+        }
+
+        //Can afforf all
+        return true;
+    }
+    public void SpendResources(ResourceAmount[] resourceAmountArray)
+    {
+        foreach (ResourceAmount resource in resourceAmountArray)
+        {
+            resourceAmountDictionary[resource.resourceType] -= resource.amount;
+        }
     }
 }
