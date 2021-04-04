@@ -5,11 +5,20 @@ using Cinemachine;
 
 public class CameraHandler : MonoBehaviour
 {
+    public static CameraHandler Instance { get; private set; }
+
     [SerializeField] private CinemachineVirtualCamera cinemachineVirtualCamera;
 
     private float orthographicSize;
     private float targetOrthographicSize;
+    private bool edgeScrolling;
 
+    private void Awake()
+    {
+        Instance = this;
+
+        edgeScrolling = PlayerPrefs.GetInt("edgeScrolling", 1) == 1;
+    }
 
     private void Start()
     {
@@ -26,6 +35,28 @@ public class CameraHandler : MonoBehaviour
     {
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
+
+        if (edgeScrolling)
+        {
+            float edgeScrollingSize = 100;
+
+            if (Input.mousePosition.x > Screen.width - edgeScrollingSize)
+            {
+                x = 1f;
+            }
+            if (Input.mousePosition.x < edgeScrollingSize)
+            {
+                x = -1f;
+            }
+            if (Input.mousePosition.y > Screen.height - edgeScrollingSize)
+            {
+                y = 1f;
+            }
+            if (Input.mousePosition.y < edgeScrollingSize)
+            {
+                y = -1f;
+            }
+        }
 
         Vector3 moveDir = new Vector3(x, y).normalized;
         float moveSpeed = 30f;
@@ -47,5 +78,15 @@ public class CameraHandler : MonoBehaviour
         orthographicSize = Mathf.Lerp(orthographicSize, targetOrthographicSize, Time.deltaTime * zoomSpeed);
 
         cinemachineVirtualCamera.m_Lens.OrthographicSize = orthographicSize;
+    }
+
+    public void SetEdgeScrolling(bool edgeScrolling)
+    {
+        this.edgeScrolling = edgeScrolling;
+        PlayerPrefs.SetInt("edgeScrolling", edgeScrolling ? 1 : 0);
+    }
+    public bool GetEdgeScrolling()
+    {
+        return edgeScrolling;
     }
 }

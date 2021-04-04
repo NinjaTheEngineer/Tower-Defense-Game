@@ -7,11 +7,14 @@ public class Building : MonoBehaviour
     private BuildingTypeSO buildingType;
     private HealthSystem healthSystem;
     private Transform buildingDemolishBtn;
+    private Transform buildingRepairBtn;
 
     private void Awake()
     {
         buildingDemolishBtn = transform.Find("pfBuildingDemolishBtn");
+        buildingRepairBtn = transform.Find("pfBuildingRepairBtn");
         HideBuildingDemolishBtn();
+        HideRepairDemolishBtn();
     }
 
     private void Start()
@@ -20,13 +23,35 @@ public class Building : MonoBehaviour
         healthSystem = GetComponent<HealthSystem>();
 
         healthSystem.SetHealthAmountMax(buildingType.healthAmountMax, true);
+        healthSystem.OnDamaged += HealthSystem_OnDamaged;
+        healthSystem.OnHealed += HealthSystem_OnHealed;
         healthSystem.OnDied += HealthSystem_OnDied;
 
     }
 
+    private void HealthSystem_OnHealed(object sender, System.EventArgs e)
+    {
+        if (healthSystem.IsFullHealth())
+        {
+            HideRepairDemolishBtn();
+        }
+    }
+
+    private void HealthSystem_OnDamaged(object sender, System.EventArgs e)
+    {
+        ShowRepairDemolishBtn();
+        SoundManager.Instance.PlaySound(SoundManager.Sound.BuildingDamaged);
+        CinemachineShake.Instance.ShakeCamera(5f, .15f);
+        ChromaticAberrationEffect.Instance.SetWeight(1f);
+    }
+
     private void HealthSystem_OnDied(object sender, System.EventArgs e)
     {
+        Instantiate(GameAssets.Instance.pfBuildingDestroyedParticles, transform.position, Quaternion.identity);
+        CinemachineShake.Instance.ShakeCamera(8f, .2f);
+        ChromaticAberrationEffect.Instance.SetWeight(1f);
         Destroy(gameObject);
+        SoundManager.Instance.PlaySound(SoundManager.Sound.BuildingDestroyed);
     }
 
     private void OnMouseEnter()
@@ -52,6 +77,20 @@ public class Building : MonoBehaviour
         if (buildingDemolishBtn != null)
         {
             buildingDemolishBtn.gameObject.SetActive(false);
+        }
+    }
+    private void ShowRepairDemolishBtn()
+    {
+        if (buildingRepairBtn != null)
+        {
+            buildingRepairBtn.gameObject.SetActive(true);
+        }
+    }
+    private void HideRepairDemolishBtn()
+    {
+        if (buildingRepairBtn != null)
+        {
+            buildingRepairBtn.gameObject.SetActive(false);
         }
     }
 }

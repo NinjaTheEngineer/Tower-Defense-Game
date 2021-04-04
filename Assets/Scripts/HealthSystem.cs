@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class HealthSystem : MonoBehaviour
 {
+    public event EventHandler OnHealthAmountMaxChanged;
     public event EventHandler OnDamaged;
     public event EventHandler OnDied;
+    public event EventHandler OnHealed;
 
     [SerializeField] private int healthAmountMax;
     private int healthAmount;
@@ -14,6 +16,20 @@ public class HealthSystem : MonoBehaviour
     private void Awake()
     {
         healthAmount = healthAmountMax;
+    }
+
+    public void Heal(int healAmount)
+    {
+        healthAmount += healthAmount;
+        healthAmount = Mathf.Clamp(healAmount, 0, healthAmountMax);
+
+        OnHealed?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void FullHeal()
+    {
+        healthAmount = healthAmountMax;
+        OnHealed?.Invoke(this, EventArgs.Empty);
     }
 
     internal void SetHealthAmountMax(int healthAmountMax, bool updateHealthAmount)
@@ -24,6 +40,8 @@ public class HealthSystem : MonoBehaviour
         {
             healthAmount = healthAmountMax;
         }
+
+        OnHealthAmountMaxChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void Damage(int damageAmount)
@@ -52,6 +70,10 @@ public class HealthSystem : MonoBehaviour
     public int GetHealthAmount()
     {
         return healthAmount;
+    }
+    public int GetHealthAmountMax()
+    {
+        return healthAmountMax;
     }
 
     public float GetHealthAmountNormalized()

@@ -39,6 +39,14 @@ public class BuildingManager : MonoBehaviour
     private void Start()
     {
         mainCamera = Camera.main;
+
+        hqBuilding.GetComponent<HealthSystem>().OnDied += HQ_OnDied;
+    }
+
+    private void HQ_OnDied(object sender, EventArgs e)
+    {
+        SoundManager.Instance.PlaySound(SoundManager.Sound.GameOver);
+        GameOverUI.Instance.Show();
     }
 
     private void Update()
@@ -57,6 +65,8 @@ public class BuildingManager : MonoBehaviour
                         ResourceManager.Instance.SpendResources(activeBuildingType.constructionResourceCostArray);
                         //Instantiate(activeBuildingType.prefab, UtilsClass.GetMouseWorldPosition(), Quaternion.identity);
                         BuildingConstruction.Create(UtilsClass.GetMouseWorldPosition(), activeBuildingType);
+                        SoundManager.Instance.PlaySound(SoundManager.Sound.BuildingPlaced);
+                        
                     }
                     else
                     {
@@ -124,6 +134,17 @@ public class BuildingManager : MonoBehaviour
                     errorMessage = "Too close to another building of the same type";
                     return false;
                 }
+            }
+        }
+        if (buildingType.hasResourceGeneratorData)
+        {
+            ResourceGeneratorData resourceGeneratorData = buildingType.resourceGeneratorData;
+            int nearbyResourceAmount = ResourceGenerator.GetNearbyResourceAmount(resourceGeneratorData, position);
+
+            if(nearbyResourceAmount == 0)
+            {
+                errorMessage = "There are no resources nearby";
+                return false;
             }
         }
 
