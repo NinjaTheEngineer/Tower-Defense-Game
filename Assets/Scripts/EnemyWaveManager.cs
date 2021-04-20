@@ -12,12 +12,14 @@ public class EnemyWaveManager : MonoBehaviour
     {
         WaitingToSpawnNextWave,
         SpawningWave,
+        Offline
     }
 
     private State state;
 
-    [SerializeField] private List<Transform> spawnPositionTransformList;
     [SerializeField] private Transform nextWaveSpawnPositonTransform;
+    private List<Transform> spawnPositionTransformList;
+    public GameObject enemySpawnPoint;
 
     private float nextWaveSpawnTimer;
     private float nextEnemySpawnTimer;
@@ -28,8 +30,9 @@ public class EnemyWaveManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        state = State.Offline;
     }
-    private void Start()
+    public void StartEnemyWaveManager()
     {
         state = State.WaitingToSpawnNextWave;
         spawnPosition = spawnPositionTransformList[UnityEngine.Random.Range(0, spawnPositionTransformList.Count)].position;
@@ -37,8 +40,22 @@ public class EnemyWaveManager : MonoBehaviour
         nextWaveSpawnTimer = 3f;
     }
 
+    public void SetSpawnPositionList(Vector3 centerPosition, float maxWidth, float maxLength)
+    {
+        spawnPositionTransformList = new List<Transform>();
+        List<Vector3> listOfPositions = GetListOfPossibleEnemyPositions(centerPosition, maxWidth, maxLength);
+        foreach(Vector3 position in listOfPositions)
+        {
+            GameObject point = Instantiate(enemySpawnPoint, position, enemySpawnPoint.transform.rotation);
+            spawnPositionTransformList.Add(point.transform);
+        }
+
+        StartEnemyWaveManager();
+    }
+
     private void Update()
     {
+        if(state != State.Offline)
         switch (state)
         {
             case State.WaitingToSpawnNextWave:
@@ -95,5 +112,22 @@ public class EnemyWaveManager : MonoBehaviour
     public Vector3 GetSpawnPosition()
     {
         return spawnPosition;
+    }
+
+    private List<Vector3> GetListOfPossibleEnemyPositions(Vector3 position, float width, float length)
+    {
+        float x = width / 4;
+        float y = length / 4;
+        return new List<Vector3>
+    {
+        new Vector3(position.x - x, position.y + (y * 2), 0),
+        new Vector3(position.x + x, position.y + (y * 2), 0),
+        new Vector3(position.x - x, position.y - (y * 2), 0),
+        new Vector3(position.x + x, position.y - (y * 2), 0),
+        new Vector3(position.x - (x * 2), position.y - y, 0),
+        new Vector3(position.x - (x * 2), position.y + y, 0),
+        new Vector3(position.x + (x * 2), position.y - y, 0),
+        new Vector3(position.x + (x * 2), position.y + y, 0)
+    };
     }
 }

@@ -11,6 +11,7 @@ public class Tower : MonoBehaviour
     private float lookForTargetTimerMax = .2f;
     private float shootTimer;
     [SerializeField] private float shootTimerMax = .2f;
+    [SerializeField] private int arrowDamage = 20;
 
     private void Awake()
     {
@@ -33,11 +34,12 @@ public class Tower : MonoBehaviour
         shootTimer -= Time.deltaTime;
         if(shootTimer <= 0f)
         {
+            projectileSpawnPosition = transform.Find("ProjectileSpawnPosition").position;
             shootTimer += shootTimerMax;
 
             if (targetEnemy != null)
             {
-                ArrowProjectile.Create(projectileSpawnPosition, targetEnemy);
+                ArrowProjectile.Create(projectileSpawnPosition, targetEnemy, arrowDamage);
             }
 
         }

@@ -43,3 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ad820f90033994498f62e8ec92e1975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pfEnemy: {fileID: 8498957173033741062, guid: bf591d47950941947be1f4c1bacfcdc0, type: 3}
+  pfEnemyDieParticles: {fileID: 4850068476918138423, guid: fa53ff3e077270e4d8a679c8fa7de07f, type: 3}
+  pfArrowProjectile: {fileID: 1419245623515870905, guid: 98eea8f69a076ff4eb4c1322465b45c8, type: 3}
+  pfBuildingDestroyedParticles: {fileID: 222898084527167713, guid: 5731055b57af76744aa0f260d9e0e788, type: 3}
+  pfBuildingPlacedParticles: {fileID: 1408080632602542178, guid: 4ac58936248f3144db274df6c4356236, type: 3}
+  pfBuildingConstruction: {fileID: 5131613403284039195, guid: 0977519466ed40e4b897dfed9ba3d50e, type: 3}

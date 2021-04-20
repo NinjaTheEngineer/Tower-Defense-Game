@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runOnce: 1
-  positionOffsetY: 0
+  positionOffsetY: 0.9
 --- !u!1 &5368216307200745139
 GameObject:
   m_ObjectHideFlags: 0

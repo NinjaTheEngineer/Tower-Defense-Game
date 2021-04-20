@@ -59,7 +59,7 @@ public class EnemyWaveUI : MonoBehaviour
     private void HandleEnemyWaveSpawnPositionIndicator()
     {
         Vector3 dirToNextSpawnPosition = (enemyWaveManager.GetSpawnPosition() - mainCamera.transform.position).normalized;
-        enemyWaveSpawnPositionIndicator.anchoredPosition = dirToNextSpawnPosition * 300f;
+        enemyWaveSpawnPositionIndicator.anchoredPosition = dirToNextSpawnPosition * 180f;
         enemyWaveSpawnPositionIndicator.eulerAngles = new Vector3(0, 0, UtilsClass.GetAngleFromVector(dirToNextSpawnPosition));
 
         float distanceToNextSpawnPosition = Vector3.Distance(enemyWaveManager.GetSpawnPosition(), mainCamera.transform.position);
@@ -98,7 +98,7 @@ public class EnemyWaveUI : MonoBehaviour
         {
             Vector3 dirToClosestEnemy = (targetEnemy.transform.position - mainCamera.transform.position).normalized;
 
-            enemyClosestPositionIndicator.anchoredPosition = dirToClosestEnemy * 250f;
+            enemyClosestPositionIndicator.anchoredPosition = dirToClosestEnemy * 125f;
             enemyClosestPositionIndicator.eulerAngles = new Vector3(0, 0, UtilsClass.GetAngleFromVector(dirToClosestEnemy));
 
             float distanceToClosestEnemy = Vector3.Distance(targetEnemy.transform.position, mainCamera.transform.position);

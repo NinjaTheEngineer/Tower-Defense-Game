@@ -26,4 +26,9 @@ public class BuildingTypeSO : ScriptableObject
         }
         return str;
     }
+
+    public bool isHQ()
+    {
+        return nameString.Equals("HQ");
+    }
 }

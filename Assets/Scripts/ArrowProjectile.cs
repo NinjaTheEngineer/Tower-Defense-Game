@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class ArrowProjectile : MonoBehaviour
 {
-    public static ArrowProjectile Create(Vector3 position, Enemy enemy)
+    public static ArrowProjectile Create(Vector3 position, Enemy enemy, int damage)
     {
         Transform arrowTransform = Instantiate(GameAssets.Instance.pfArrowProjectile, position, Quaternion.identity);
 
         ArrowProjectile arrowProjectile = arrowTransform.GetComponent<ArrowProjectile>();
         arrowProjectile.SetTarget(enemy);
+        arrowProjectile.SetArrowDamage(damage);
         return arrowProjectile;
     }
 
     private Enemy targetEnemy;
     private Vector3 lastMoveDir;
+    private int arrowDamage;
     private float timeToDie = 2f;
 
     private void Update()
@@ -48,13 +50,17 @@ public class ArrowProjectile : MonoBehaviour
         this.targetEnemy = targetEnemy;
     }
 
+    private void SetArrowDamage(int damage)
+    {
+        this.arrowDamage = damage;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Enemy enemy = collision.GetComponent<Enemy>();
         if (enemy != null)
         {
-            int damageAmount = 15;
-            enemy.GetComponent<HealthSystem>().Damage(damageAmount);
+            enemy.GetComponent<HealthSystem>().Damage(arrowDamage);
             Destroy(gameObject);
         }
     }
